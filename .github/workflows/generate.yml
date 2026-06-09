@@ -1,0 +1,54 @@
+name: Generate Svelte Project from Template
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  scaffold-svelte:
+    # Only run this if the repository isn't the template repository itself
+    if: ${{ github.repository != 'datf/copier-svelte-test' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Copier
+        run: pip install copier
+
+      - name: Clear repository (except .git and .github)
+        run: |
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Run Copier
+        run: |
+          # Use --defaults but inject the repository name dynamically
+          copier copy --defaults --trust \
+            -d project_name="${{ github.repository }}" \
+            -d author="${{ github.repository_owner }}" \
+            gh:datf/copier-svelte-test .
+
+      - name: Commit and Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Initialize Svelte project using Copier template"
+          git push origin HEAD
