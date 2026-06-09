@@ -1,5 +1,29 @@
+# datf/svelte-GitHubPages-template
+
+Built with SvelteKit, generated via Copier.
+Created by **datf**.
+
 ## Getting Started
 
-Just click on the "Use this template" button and wait for the action to run.  Then you'll have a working svelte project ready to be published to github pages.
+Source the aliases file
 
-Don't forget to turn on Pages in your project's settings!
+```sh
+. ./aliases
+```
+
+Build (and run) the container
+
+```sh
+pupb
+```
+
+Start developing!
+
+## Building
+
+To use pnpm, with the container running, source aliases again and use the alias `ppnpm`
+
+```sh
+. ./aliases
+ppnpm install PACKAGE_NAME
+```
