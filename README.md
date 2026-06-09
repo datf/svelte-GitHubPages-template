@@ -1,5 +1,5 @@
 ## Getting Started
 
-Just click on the "Use this template" button and wait for the action to run.  Then you'll have a working svelte project ready to be published to github pages.
-
-Don't forget to turn on Pages in your project's settings!
+1. Click the big green button `Use this template` or click <a href="../../generate">here</a>.
+1. Enter a Repository name and click `Create repository from template`.
+1. Head over to the created repository and turn on Pages in the settings.

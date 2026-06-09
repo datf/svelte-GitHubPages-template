@@ -3,6 +3,7 @@ _exclude:
   - ".github/workflows/generate.yml"
   - "copier.yml"
   - "LICENSE"
+  - "README.md"
 
 project_name:
   type: str
