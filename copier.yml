@@ -1,0 +1,43 @@
+_exclude:
+  - ".git"
+  - ".github/workflows/generate.yml"
+  - "copier.yml"
+  - "LICENSE"
+
+project_name:
+  type: str
+  help: What is the name of your Svelte project?
+  default: my-svelte-app
+  
+author:
+  type: str
+  help: Who is the author of this project?
+  default: "Svelte Developer"
+
+use_ts:
+  type: bool
+  help: Do you want to use TypeScript?
+  default: true
+
+install_pm:
+  type: str
+  help: Which package manager do you want to use?
+  choices:
+    - pnpm
+    - npm
+    - yarn
+  default: pnpm
+
+_tasks:
+  - command: npm install -g pnpm
+    when: "{{ install_pm == 'pnpm' }}"
+  - command: npm install -g yarn
+    when: "{{ install_pm == 'yarn' }}"
+  - >-
+    npx --yes sv create . --template minimal {% if use_ts %}--types ts{% else %}--types js{% endif %} --install {{ install_pm }} --no-download-check --no-dir-check --add prettier eslint tailwindcss="plugins:typography" vitest="usages:unit" sveltekit-adapter=adapter:static "@datf/sveltekit-github-pages-config-dockerized"
+  - command: npm pkg set author="{{ author }}"
+  - command: bash -c 'echo "" >> .npmrc && echo "store-dir=.pnpm-store" >> .npmrc'
+    when: "{{ install_pm == 'pnpm' }}"
+  - command: bash -c 'echo "" >> .gitignore && echo ".pnpm-store/" >> .gitignore'
+    when: "{{ install_pm == 'pnpm' }}"
+  - command: mv -f README.copier.md README.md
