@@ -1,0 +1,56 @@
+name: Test Copier and the generated SvelteKit servers nightly
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  test-servers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Copier
+        run: pip install copier
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11
+          run_install: false
+
+      - name: Clear repository (except .git and .github)
+        run: |
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+
+      - name: Run Copier
+        run: |
+          copier copy --defaults --trust \
+            -d project_name="${{ github.repository }}" \
+            -d author="${{ github.repository_owner }}" \
+            gh:datf/svelte-GitHubPages-template .
+
+      - name: Test dev server
+        timeout-minutes: 5
+        run: |
+          pnpm run dev &
+          pnpx wait-on -d 10 -t 30s http://localhost:5173
+
+      - name: Test build and preview
+        timeout-minutes: 5
+        run: |
+          pnpm run build
+          pnpm run preview &
+          pnpx wait-on -d 10 -t 30s http://localhost:4173

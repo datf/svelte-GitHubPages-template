@@ -1,6 +1,7 @@
 _exclude:
   - ".git"
   - ".github/workflows/generate.yml"
+  - ".github/workflows/test.yml"
   - "copier.yml"
   - "LICENSE"
   - "README.md"
